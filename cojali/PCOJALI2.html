@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedrun</title>
+    <link rel="stylesheet" href="pcojalicss2.css">
+    <style>
+        .speedrun {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            background-color: #f9f9f9;
+        }
+        .speedrun img {
+            max-width: 100px;
+            margin-right: 20px;
+        }
+        .speedrun p {
+            margin: 5px 0;
+        }
+        #speedrunsContainer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form id="speedrunForm">
+        <h2>Añadir Speedrun</h2>
+        <label for="name">Nombre del Speedrunner:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="country">País:</label>
+        <input type="text" id="country" name="country" required><br>
+        <label for="time">Tiempo:</label>
+        <input type="text" id="time" name="time" required><br>
+        <label for="date">Fecha de realización:</label>
+        <input type="date" id="date" name="date" required><br>
+        <label for="juego">Videojuego ha speedrunear:</label>
+        <input type="text" name="juego" id="juego"><br>
+        <label for="image">Imagen:</label>
+        <input type="file" id="image" name="image" accept="image/*" required><br>
+        <button type="submit">Añadir Speedrun</button>
+    </form>
+    <div id="speedrunsContainer"></div>
+
+    <script>
+        document.getElementById('speedrunForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const country = document.getElementById('country').value;
+            const time = document.getElementById('time').value;
+            const date = document.getElementById('date').value;
+            const juego = document.getElementById('juego').value;
+            const image = document.getElementById('image').files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const newSpeedrun = document.createElement('div');
+                newSpeedrun.classList.add('speedrun');
+                newSpeedrun.innerHTML = `
+                    <img src="${e.target.result}" alt="Speedrun Image">
+                    <div>
+                        <p><strong>Nombre del Speedrunner:</strong> ${name}</p>
+                        <p><strong>País:</strong> ${country}</p>
+                        <p><strong>Tiempo:</strong> ${time}</p>
+                        <p><strong>Nombre del juego:</strong> ${juego}</p>
+                        <p><strong>Fecha de realización:</strong> ${date}</p>
+                    </div>
+                `;
+                document.getElementById('speedrunsContainer').appendChild(newSpeedrun);
+            };
+            reader.readAsDataURL(image);
+        });
+
+        // Recuperar el tiempo guardado y mostrarlo en el formulario
+        let tiempoGuardado = localStorage.getItem("tiempoCronometro");
+        if (tiempoGuardado) {
+            document.getElementById("time").value = tiempoGuardado;
+        }
+
+        // Obtener datos de la API y mostrarlos
+        fetch('apis.json') // Asegúrate de que la URL de la API sea correcta
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const speedrunsContainer = document.getElementById('speedrunsContainer');
+                data.speedruns.forEach(speedrun => {
+                    const speedrunDiv = document.createElement('div');
+                    speedrunDiv.classList.add('speedrun');
+                    speedrunDiv.innerHTML = `
+                        <img src="${speedrun.imagen}" alt="Speedrun Image">
+                        <div>
+                            <p><strong>Nombre del Speedrunner:</strong> ${speedrun.nombre}</p>
+                            <p><strong>País:</strong> ${speedrun.pais}</p>
+                            <p><strong>Tiempo:</strong> ${speedrun.tiempo}</p>
+                            <p><strong>Nombre del juego:</strong> ${speedrun.juego}</p>
+                            <p><strong>Fecha de realización:</strong> ${speedrun.fecha}</p>
+                        </div>
+                    `;
+                    speedrunsContainer.appendChild(speedrunDiv);
+                });
+            })
+            .catch(error => console.error('Error al obtener los datos de la API:', error));
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+    "speedruns": [
+        {
+            "nombre": "Juan Pérez",
+            "pais": "España",
+            "tiempo": "1:23:45",
+            "fecha": "2023-10-01",
+            "juego": "Super Mario Bros",
+            "imagen": "mario.jpg"
+        },
+        {
+            "nombre": "Ana Gómez",
+            "pais": "México",
+            "tiempo": "1:30:00",
+            "fecha": "2023-09-25",
+            "juego": "Minecraft",
+            "imagen": "minecraft.jpg"
+        }
+    ]
+}
